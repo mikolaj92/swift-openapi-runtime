@@ -185,6 +185,11 @@ public struct Configuration: Sendable {
     /// Custom XML coder for encoding and decoding xml bodies.
     public var xmlCoder: (any CustomCoder)?
 
+    /// A callback that observes client-side errors.
+    ///
+    /// The callback is invoked after the error has been wrapped in a ``ClientError``.
+    public var clientErrorHandler: (@Sendable (ClientError) -> Void)?
+
     /// Creates a new configuration with the specified values.
     ///
     /// - Parameters:
@@ -193,15 +198,18 @@ public struct Configuration: Sendable {
     ///   - jsonEncodingOptions: The options for the underlying JSON encoder.
     ///   - multipartBoundaryGenerator: The generator to use when creating mutlipart bodies.
     ///   - xmlCoder: Custom XML coder for encoding and decoding xml bodies. Only required when using XML body payloads.
+    ///   - clientErrorHandler: A callback that observes client-side errors.
     public init(
         dateTranscoder: any DateTranscoder = .iso8601,
         jsonEncodingOptions: JSONEncodingOptions = [.sortedKeys, .prettyPrinted],
         multipartBoundaryGenerator: any MultipartBoundaryGenerator = .random,
-        xmlCoder: (any CustomCoder)? = nil
+        xmlCoder: (any CustomCoder)? = nil,
+        clientErrorHandler: (@Sendable (ClientError) -> Void)? = nil
     ) {
         self.dateTranscoder = dateTranscoder
         self.jsonEncodingOptions = jsonEncodingOptions
         self.multipartBoundaryGenerator = multipartBoundaryGenerator
         self.xmlCoder = xmlCoder
+        self.clientErrorHandler = clientErrorHandler
     }
 }
